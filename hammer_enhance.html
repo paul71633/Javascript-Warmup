@@ -1,0 +1,208 @@
+<html>
+<head>
+
+<script language="JavaScript" type="text/JavaScript">
+<!--
+
+var moving_timer, count_down_timer;	// Declare the two timers
+var score = 0;				// To store the score of the player
+var time_remaining = 10;		// To store the time remaining
+var monster_position=0;			// To store the position of the monster
+var finished=false;			// Indicate whether the game is finished or not
+var hitSound, missSound;		// Declare the two sounds
+var speed = 600;
+
+
+function game_start(){
+	// initiate two sounds
+	// count down after one second
+  // let the monster moves
+  finished = !finished;
+  if (finished === false){
+    document.getElementById("start");
+    start.innerHTML = "Stop";
+    hitSound = document.getElementById("ouch");
+    missSound = document.getElementById("boo");
+    setTimeout("count_down()", 1000);
+    relocate();
+  } else {
+    document.images[monster_position].src = 'empty.png';
+    monster_position = 4;
+    document.images[monster_position].src = 'monster.png';
+    document.getElementById("start");
+    start.innerHTML = "Start";
+    var timer_element = document.getElementById("timer_text");
+    time_remaining = 10;
+    timer_element.innerHTML = "Time remaining: " + time_remaining + " sec";
+    var score_element = document.getElementById("score_text");
+    score = 0;
+    score_element.innerHTML = "Score: " + score;
+    speed = 600;
+    document.getElementById("normal").style.background = "yellow";
+    document.getElementById("fast").style.background = "yellow";
+    document.getElementById("slow").style.background = "yellow";
+    clearTimeout(moving_timer);
+    clearTimeout(count_down_timer);
+    finished = true;
+  }
+}
+function game_stop() {
+  finished = true;
+  clearTimeout(moving_timer);
+  monster_position = 4;
+  document.images[monster_position].src = 'monster.png';
+  document.getElementById("start");
+  start.innerHTML = "Start";
+}
+
+function count_down(){
+	// decrease remaining time by one
+	// update the text disply
+  // call the function again after one second or finish the game
+  time_remaining = time_remaining - 1;
+  var timer_element = document.getElementById("timer_text");
+  timer_element.innerHTML = "Time remaining: " + time_remaining + " sec";
+  if (time_remaining == 0) {
+    game_over();
+    finished = false;
+    game_start();
+  }
+  else
+    count_down_timer = setTimeout("count_down()", 1000);  
+}
+
+function relocate(){
+	// clear previous image
+	// generate a random number between 0 and 8
+	// move the monster to the new position
+  // call this function again after certain period of time
+  document.images[monster_position].src = 'empty.png';
+  var old_position = monster_position;
+  while (old_position == monster_position)
+    monster_position = Math.floor(Math.random()*9);
+  document.images[monster_position].src = 'monster.png';
+  moving_timer = setTimeout("relocate()", speed);
+}
+
+function game_over(){
+	// set the variable, finished, to true
+	// clear the two timers
+  // alert player
+  clearTimeout(moving_timer);
+  alert("Times up!!!"); 
+  finished = true;
+}
+
+function mouse_event(event){
+  var hit_box;
+  switch(event) {
+      case 0: hit_box=0; break;
+      case 1: hit_box=1; break;
+      case 2: hit_box=2; break;
+      case 3: hit_box=3; break;
+      case 4: hit_box=4; break;
+      case 5: hit_box=5; break;
+      case 6: hit_box=6; break;
+      case 7: hit_box=7; break;
+      case 8: hit_box=8; break;
+  }
+  if (hit_box == monster_position){
+
+		// updates player score
+		score = score + 1;
+		var score_element = document.getElementById("score_text") ;
+		score_element.innerHTML = "Score: " + score;
+
+		// clear the running timer
+		clearTimeout(moving_timer);
+		// ask the monster to relocate now
+		hitSound.pause();
+		hitSound.play();
+		relocate();
+	}
+	else {
+		missSound.pause();
+		missSound.play();
+	}
+}
+function normalSpeed() {
+  speed = 600;
+  document.getElementById("normal").style.background = "red";
+  document.getElementById("fast").style.background = "yellow";
+  document.getElementById("slow").style.background = "yellow";
+}
+function fastSpeed() {
+  speed = 300;
+  document.getElementById("fast").style.background = "red";
+  document.getElementById("normal").style.background = "yellow";
+  document.getElementById("slow").style.background = "yellow";
+}
+function slowSpeed() {
+  speed = 1200;
+  document.getElementById("slow").style.background = "red";
+  document.getElementById("normal").style.background = "yellow";
+  document.getElementById("fast").style.background = "yellow";
+}
+
+-->
+</script>
+</head>
+
+<body onload="game_stop()">
+
+  <table border="10" width="300">
+    <tr>
+      <td height="100" width="100" onmousedown="mouse_event(0)"> <img src="empty.png" height="100" width="100"> </td>
+      <td height="100" width="100" onmousedown="mouse_event(1)"> <img src="empty.png" height="100" width="100"> </td>
+      <td height="100" width="100" onmousedown="mouse_event(2)"> <img src="empty.png" height="100" width="100"> </td>
+    </tr>
+    <tr>
+      <td height="100" width="100" onmousedown="mouse_event(3)"> <img src="empty.png" height="100" width="100"> </td>
+      <td height="100" width="100" onmousedown="mouse_event(4)"> <img src="empty.png" height="100" width="100"> </td>
+      <td height="100" width="100" onmousedown="mouse_event(5)"> <img src="empty.png" height="100" width="100"> </td>
+    </tr>
+    <tr>
+      <td height="100" width="100" onmousedown="mouse_event(6)"> <img src="empty.png" height="100" width="100"> </td>
+      <td height="100" width="100" onmousedown="mouse_event(7)"> <img src="empty.png" height="100" width="100"> </td>
+      <td height="100" width="100" onmousedown="mouse_event(8)"> <img src="empty.png" height="100" width="100"> </td>
+    </tr>
+  </table>
+
+  <div>
+    <button id="start" style="width: 100px" onClick="game_start()">
+      Start
+    </button>
+  </div>
+  
+  <div id="timer_text" style="font-size:32pt">
+    Time remaining: 10 sec
+  </div>
+
+  <div id="score_text" style="font-size:32pt">
+    Score: 0
+  </div>
+
+  <div>
+    <button id="normal" style="width: 100px; background: yellow" onClick="normalSpeed()">
+      Normal
+    </button>
+  </div>
+
+  <div>
+    <button id="fast" style="width: 100px; background: yellow" onClick="fastSpeed()">
+      Expert
+    </button>
+  </div>
+
+  <div>
+    <button id="slow" style="width: 100px; background: yellow" onClick="slowSpeed()">
+      Novice
+    </button>
+  </div>
+
+  <audio src="./boo.mp3" type="audio/mpeg" width="0" height="0" id="boo" > </audio>
+	<audio src="./ouch.mp3" type="audio/mpeg" width="0" height="0" id="ouch"> </audio>
+
+</body>
+
+</html>
